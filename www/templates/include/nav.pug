@@ -1,0 +1,79 @@
+mixin navList(list,level=1)
+	each l in list
+		p(class="nav l"+level)
+			if l.selected
+				span= "< " + l.title + " >"
+			else
+				a.list(href=l.link)= l.title
+		if l.nav
+			+navList(l.nav, level + 1)
+
+mixin nav
+	.nav
+		.nav-content
+			h1 LoreMechanics
+			p.nav.user
+				if user
+					span.id= "#" + user.__oid
+					if user.picture
+						|
+						|
+						img(width="36px",height="36px",style="vertical-align: middle",src=user.picture, alt="User image")
+						|
+						|
+					span= " " + user.fullName + " "
+					a(href="/auth/external/cancel?target="+encodeURIComponent(window.location.href)) (Exit)
+				else
+					a(href="/auth/external/login?provider=google&target="+encodeURIComponent(window.location.href)) Sign In with Google
+			if locale
+				h2
+					span= "Language: "
+					a(href="/selectLanguage")= locale.name
+			if nav
+				+navList(nav)
+
+mixin title
+	.title
+		p.nav
+			a(href="/wiki") Wiki
+			|
+			|
+			a(href="/timelines") Timelines
+			|
+			|
+			a(href="/game") Game Mechanics
+			|
+			|
+			a(href="/dialogs") Dialogs
+
+mixin breadcrumbs
+	.breadcrumbs
+		p.breadcrumbs
+			each br, idx in breadcrumbs
+				if idx == 0
+					a.breadcrumbs(href=br.link)= br.title
+				else
+					span= " > "
+					a.breadcrumbs(href=br.link)= br.title
+
+mixin style
+	link(rel='stylesheet', href='/css/style.css')
+	link(rel="stylesheet",type="text/css",href="https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900")
+
+mixin input(name, placehlder, value=null, type="text")
+	span.input
+		span.placeholder= placehlder
+		input(name=name,placeholder=placehlder,type=type,value=value?value:"")
+
+mixin cursor
+	if cursor
+		p#cursor.cursor
+			if cursor.prev
+				a.nav(href=window.location.pathname+"?c="+cursor.prev+"&"+customArgs+"#cursor") Prev
+				|
+				|
+			span= cursor.start + " - " + cursor.end + " из " + cursor.total
+			if cursor.next
+				|
+				|
+				a.nav(href=window.location.pathname+"?c="+cursor.next+"&"+customArgs+"#cursor") Next
